@@ -32,10 +32,11 @@ class DraggableElementWidget extends StatelessWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          // ── Main content + drag ─────────────────────────────────────────
+          // ── Main content + drag + double-tap to edit ───────────────────
           Positioned.fill(
             child: GestureDetector(
               onTap: () => notifier.selectElement(element.id),
+              onDoubleTap: () => _showEditDialog(context, notifier),
               onPanUpdate: (d) {
                 notifier.updatePosition(
                   element.id,
@@ -96,6 +97,15 @@ class DraggableElementWidget extends StatelessWidget {
       BarcodeElement e => _BarcodeView(element: e),
       TextElement e => _TextView(element: e, scale: scale),
     };
+  }
+
+  void _showEditDialog(BuildContext context, dynamic notifier) {
+    switch (element) {
+      case TextElement e:
+        _EditTextDialog.show(context, e, notifier);
+      case BarcodeElement e:
+        _EditBarcodeDialog.show(context, e, notifier);
+    }
   }
 }
 
@@ -205,6 +215,90 @@ class _ResizeHandle extends StatelessWidget {
         .copyWithPosition(newX, newY)
         .copyWithSize(newW, newH);
     notifier.updateElement(resized);
+  }
+}
+
+// ── Edit text dialog ─────────────────────────────────────────────────────────
+
+class _EditTextDialog {
+  static void show(BuildContext context, TextElement element, dynamic notifier) {
+    final ctrl = TextEditingController(text: element.text);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Редактировать текст'),
+        content: TextField(
+          controller: ctrl,
+          autofocus: true,
+          maxLines: 3,
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: 'Введите текст...',
+          ),
+          onSubmitted: (_) => _apply(ctx, element, ctrl.text, notifier),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Отмена'),
+          ),
+          FilledButton(
+            onPressed: () => _apply(ctx, element, ctrl.text, notifier),
+            child: const Text('Применить'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static void _apply(
+      BuildContext ctx, TextElement element, String text, dynamic notifier) {
+    if (text.trim().isEmpty) return;
+    notifier.updateElement(element.copyWith(text: text.trim()));
+    Navigator.pop(ctx);
+  }
+}
+
+// ── Edit barcode dialog ───────────────────────────────────────────────────────
+
+class _EditBarcodeDialog {
+  static void show(
+      BuildContext context, BarcodeElement element, dynamic notifier) {
+    final ctrl = TextEditingController(text: element.value);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Редактировать штрихкод'),
+        content: TextField(
+          controller: ctrl,
+          autofocus: true,
+          keyboardType: TextInputType.text,
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: 'Значение штрихкода',
+            hintText: '5901234123457',
+          ),
+          onSubmitted: (_) => _apply(ctx, element, ctrl.text, notifier),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Отмена'),
+          ),
+          FilledButton(
+            onPressed: () => _apply(ctx, element, ctrl.text, notifier),
+            child: const Text('Применить'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static void _apply(BuildContext ctx, BarcodeElement element, String value,
+      dynamic notifier) {
+    if (value.trim().isEmpty) return;
+    notifier.updateElement(element.copyWith(value: value.trim()));
+    Navigator.pop(ctx);
   }
 }
 
