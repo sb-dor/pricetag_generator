@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'core/di/app_scope.dart';
-import 'core/di/printer_settings.dart';
-import 'designer/notifiers/canvas_notifier.dart';
-import 'screens/designer_screen.dart';
+import 'pricetag/core/di/app_scope.dart';
+import 'pricetag/core/di/printer_settings.dart';
+import 'pricetag/designer/notifiers/canvas_notifier.dart';
+import 'pricetag/screens/designer_screen.dart';
 
 void main() {
   runApp(const App());
