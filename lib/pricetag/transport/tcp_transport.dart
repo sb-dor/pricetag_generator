@@ -18,6 +18,12 @@ class TcpTransport implements PrinterTransport {
 
   @override
   Future<void> connect() async {
+    // Validate host before attempting connection
+    final valid = RegExp(r'^[a-zA-Z0-9.\-_]+$');
+    if (host.isEmpty || !valid.hasMatch(host)) {
+      throw Exception(
+          'Некорректный IP адрес: "$host". Откройте настройки и введите правильный IP.');
+    }
     _socket = await Socket.connect(
       host,
       port,

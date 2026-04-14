@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../core/di/app_scope.dart';
 import '../core/di/printer_settings.dart';
 import '../designer/models/label_size.dart';
@@ -67,6 +68,9 @@ class _PrinterSettingsScreenState extends State<PrinterSettingsScreen> {
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                ],
                 onChanged: settings.setHost,
               ),
               const SizedBox(height: 12),
