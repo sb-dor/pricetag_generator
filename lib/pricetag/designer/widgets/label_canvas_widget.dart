@@ -49,11 +49,13 @@ class LabelCanvasWidget extends StatelessWidget {
                     return Stack(
                       clipBehavior: Clip.hardEdge,
                       children: elements
-                          .map((e) => DraggableElementWidget(
-                                key: ValueKey(e.id),
-                                element: e,
-                                scale: scale,
-                              ))
+                          .map(
+                            (e) => DraggableElementWidget(
+                              key: ValueKey(e.id),
+                              element: e,
+                              scale: scale,
+                            ),
+                          )
                           .toList(),
                     );
                   },

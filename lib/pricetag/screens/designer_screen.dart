@@ -91,10 +91,7 @@ class _DesignerScreenState extends State<DesignerScreen> {
           const ElementToolbar(),
 
           // ── Bottom action bar (Print) ─────────────────────────────────────
-          _BottomActionBar(
-            isBusy: _isBusy,
-            onPrint: () => _print(context),
-          ),
+          _BottomActionBar(isBusy: _isBusy, onPrint: () => _print(context)),
         ],
       ),
     );
@@ -103,8 +100,7 @@ class _DesignerScreenState extends State<DesignerScreen> {
   // ── Capture ──────────────────────────────────────────────────────────────
 
   Future<Uint8List> _captureCanvas() async {
-    final boundary =
-        _repaintKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+    final boundary = _repaintKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
     final dpi = AppScope.read(context).canvasNotifier.labelSize.dpi.toDouble();
     final image = await boundary.toImage(pixelRatio: dpi / 96.0);
     final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
@@ -158,7 +154,9 @@ class _DesignerScreenState extends State<DesignerScreen> {
                   final png = await _captureCanvas();
                   await _exportService.saveAsPdf(png, size);
                 } catch (e) {
-                  messenger.showSnackBar(SnackBar(content: Text('Ошибка: $e'), backgroundColor: Colors.red));
+                  messenger.showSnackBar(
+                    SnackBar(content: Text('Ошибка: $e'), backgroundColor: Colors.red),
+                  );
                 } finally {
                   if (mounted) setState(() => _isBusy = false);
                 }
@@ -175,7 +173,9 @@ class _DesignerScreenState extends State<DesignerScreen> {
                   final png = await _captureCanvas();
                   await _exportService.saveAsImage(png, size);
                 } catch (e) {
-                  messenger.showSnackBar(SnackBar(content: Text('Ошибка: $e'), backgroundColor: Colors.red));
+                  messenger.showSnackBar(
+                    SnackBar(content: Text('Ошибка: $e'), backgroundColor: Colors.red),
+                  );
                 } finally {
                   if (mounted) setState(() => _isBusy = false);
                 }
@@ -199,9 +199,9 @@ class _DesignerScreenState extends State<DesignerScreen> {
           final notifier = AppScope.read(context).canvasNotifier;
           await _templateService.save(notifier, name);
           if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Шаблон "$name" сохранён')),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('Шаблон "$name" сохранён')));
           }
         },
         onLoad: (template) {
@@ -263,9 +263,7 @@ class _BottomActionBar extends StatelessWidget {
                 )
               : const Icon(Icons.print_outlined),
           label: Text(isBusy ? 'Обработка...' : 'Печать'),
-          style: FilledButton.styleFrom(
-            minimumSize: const Size.fromHeight(44),
-          ),
+          style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(44)),
         ),
       ),
     );
@@ -299,8 +297,7 @@ class _ElementPropertiesBar extends StatelessWidget {
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
             tooltip: 'Удалить элемент',
-            onPressed: () =>
-                AppScope.read(context).canvasNotifier.removeElement(element.id),
+            onPressed: () => AppScope.read(context).canvasNotifier.removeElement(element.id),
           ),
         ],
       ),
@@ -308,9 +305,9 @@ class _ElementPropertiesBar extends StatelessWidget {
   }
 
   String _label() => switch (element) {
-        BarcodeElement e => 'Штрихкод: ${e.value}  •  тяни за углы чтобы изменить размер',
-        TextElement e => 'Текст: ${e.text}  •  тяни за углы чтобы изменить размер',
-      };
+    BarcodeElement e => 'Штрихкод: ${e.value}  •  тяни за углы чтобы изменить размер',
+    TextElement e => 'Текст: ${e.text}  •  тяни за углы чтобы изменить размер',
+  };
 }
 
 // ── Templates bottom sheet ────────────────────────────────────────────────────
@@ -359,8 +356,7 @@ class _TemplatesSheetState extends State<_TemplatesSheet> {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
             child: Row(
               children: [
-                const Text('Шаблоны',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                const Text('Шаблоны', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 const Spacer(),
                 FilledButton.icon(
                   icon: const Icon(Icons.save_outlined, size: 18),
@@ -382,8 +378,7 @@ class _TemplatesSheetState extends State<_TemplatesSheet> {
                 final templates = snap.data ?? [];
                 if (templates.isEmpty) {
                   return const Center(
-                    child: Text('Нет сохранённых шаблонов',
-                        style: TextStyle(color: Colors.grey)),
+                    child: Text('Нет сохранённых шаблонов', style: TextStyle(color: Colors.grey)),
                   );
                 }
                 return ListView.builder(

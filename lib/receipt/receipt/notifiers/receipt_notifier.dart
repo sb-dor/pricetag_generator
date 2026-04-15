@@ -51,9 +51,6 @@ class ReceiptNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  Receipt buildReceipt(String storeName) => Receipt(
-        storeName: storeName,
-        items: List.of(_items),
-        printedAt: DateTime.now(),
-      );
+  Receipt buildReceipt(String storeName) =>
+      Receipt(storeName: storeName, items: List.of(_items), printedAt: DateTime.now());
 }

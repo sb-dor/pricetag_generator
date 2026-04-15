@@ -53,8 +53,7 @@ class _TemplateEditorScreenState extends State<TemplateEditorScreen> {
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                 child: Row(
                   children: [
-                    const Text('Ширина бумаги:',
-                        style: TextStyle(fontWeight: FontWeight.w500)),
+                    const Text('Ширина бумаги:', style: TextStyle(fontWeight: FontWeight.w500)),
                     const SizedBox(width: 12),
                     SegmentedButton<int>(
                       segments: const [
@@ -62,8 +61,7 @@ class _TemplateEditorScreenState extends State<TemplateEditorScreen> {
                         ButtonSegment(value: 80, label: Text('80 мм')),
                       ],
                       selected: {tmpl.paperWidthMm},
-                      onSelectionChanged: (s) =>
-                          notifier.setEditingPaperWidth(s.first),
+                      onSelectionChanged: (s) => notifier.setEditingPaperWidth(s.first),
                     ),
                   ],
                 ),
@@ -77,12 +75,7 @@ class _TemplateEditorScreenState extends State<TemplateEditorScreen> {
                   onReorder: notifier.reorderBlocks,
                   itemBuilder: (_, i) {
                     final block = tmpl.blocks[i];
-                    return _BlockTile(
-                      key: ValueKey(i),
-                      block: block,
-                      index: i,
-                      notifier: notifier,
-                    );
+                    return _BlockTile(key: ValueKey(i), block: block, index: i, notifier: notifier);
                   },
                 ),
               ),
@@ -175,9 +168,7 @@ class _TemplateEditorScreenState extends State<TemplateEditorScreen> {
           ),
         ),
         actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Закрыть')),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Закрыть')),
         ],
       ),
     );
@@ -197,28 +188,17 @@ class _BlockTile extends StatelessWidget {
   final int index;
   final TemplateNotifier notifier;
 
-  const _BlockTile({
-    super.key,
-    required this.block,
-    required this.index,
-    required this.notifier,
-  });
+  const _BlockTile({super.key, required this.block, required this.index, required this.notifier});
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: ReorderableDragStartListener(
-        index: index,
-        child: const Icon(Icons.drag_handle),
-      ),
+      leading: ReorderableDragStartListener(index: index, child: const Icon(Icons.drag_handle)),
       title: Text(block.displayName),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Switch(
-            value: block.visible,
-            onChanged: (_) => notifier.toggleBlockVisible(index),
-          ),
+          Switch(value: block.visible, onChanged: (_) => notifier.toggleBlockVisible(index)),
           IconButton(
             icon: const Icon(Icons.settings_outlined, size: 20),
             onPressed: () => _showConfigSheet(context),
@@ -233,14 +213,8 @@ class _BlockTile extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       builder: (_) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: _BlockConfigPanel(
-          block: block,
-          index: index,
-          notifier: notifier,
-        ),
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: _BlockConfigPanel(block: block, index: index, notifier: notifier),
       ),
     );
   }
@@ -253,11 +227,7 @@ class _BlockConfigPanel extends StatefulWidget {
   final int index;
   final TemplateNotifier notifier;
 
-  const _BlockConfigPanel({
-    required this.block,
-    required this.index,
-    required this.notifier,
-  });
+  const _BlockConfigPanel({required this.block, required this.index, required this.notifier});
 
   @override
   State<_BlockConfigPanel> createState() => _BlockConfigPanelState();
@@ -286,18 +256,17 @@ class _BlockConfigPanelState extends State<_BlockConfigPanel> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(_block.displayName,
-                style: const TextStyle(
-                    fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(
+              _block.displayName,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 12),
             ..._fields(),
             const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Отмена')),
+                TextButton(onPressed: () => Navigator.pop(context), child: const Text('Отмена')),
                 const SizedBox(width: 8),
                 FilledButton(onPressed: _save, child: const Text('Применить')),
               ],
@@ -311,56 +280,60 @@ class _BlockConfigPanelState extends State<_BlockConfigPanel> {
   List<Widget> _fields() {
     return switch (_block) {
       HeaderBlock b => [
-          _textField('Название магазина', b.storeName,
-              (v) => setState(() => _block = b..storeName = v)),
-          const SizedBox(height: 8),
-          _textField('Подзаголовок (необязательно)', b.subtitle ?? '',
-              (v) => setState(
-                  () => _block = b..subtitle = v.isEmpty ? null : v)),
-        ],
+        _textField(
+          'Название магазина',
+          b.storeName,
+          (v) => setState(() => _block = b..storeName = v),
+        ),
+        const SizedBox(height: 8),
+        _textField(
+          'Подзаголовок (необязательно)',
+          b.subtitle ?? '',
+          (v) => setState(() => _block = b..subtitle = v.isEmpty ? null : v),
+        ),
+      ],
       DividerBlock b => [
-          _textField('Символ разделителя', b.char,
-              (v) => setState(
-                  () => _block = b..char = v.isEmpty ? '-' : v[0])),
-        ],
+        _textField(
+          'Символ разделителя',
+          b.char,
+          (v) => setState(() => _block = b..char = v.isEmpty ? '-' : v[0]),
+        ),
+      ],
       FooterBlock b => [
-          _textField('Текст подвала', b.text,
-              (v) => setState(() => _block = b..text = v)),
-        ],
+        _textField('Текст подвала', b.text, (v) => setState(() => _block = b..text = v)),
+      ],
       CustomTextBlock b => [
-          _textField('Текст', b.text,
-              (v) => setState(() => _block = b..text = v)),
-          SwitchListTile(
-            title: const Text('Жирный'),
-            value: b.isBold,
-            onChanged: (v) => setState(() => _block = b..isBold = v),
-          ),
-        ],
+        _textField('Текст', b.text, (v) => setState(() => _block = b..text = v)),
+        SwitchListTile(
+          title: const Text('Жирный'),
+          value: b.isBold,
+          onChanged: (v) => setState(() => _block = b..isBold = v),
+        ),
+      ],
       ItemsTableBlock b => [
-          SwitchListTile(
-            title: const Text('Показывать скидку'),
-            value: b.showDiscount,
-            onChanged: (v) => setState(() => _block = b..showDiscount = v),
-          ),
-          SwitchListTile(
-            title: const Text('Показывать единицу товара'),
-            value: b.showUnit,
-            onChanged: (v) => setState(() => _block = b..showUnit = v),
-          ),
-        ],
+        SwitchListTile(
+          title: const Text('Показывать скидку'),
+          value: b.showDiscount,
+          onChanged: (v) => setState(() => _block = b..showDiscount = v),
+        ),
+        SwitchListTile(
+          title: const Text('Показывать единицу товара'),
+          value: b.showUnit,
+          onChanged: (v) => setState(() => _block = b..showUnit = v),
+        ),
+      ],
       TotalsBlock b => [
-          SwitchListTile(
-            title: const Text('Итого без скидки'),
-            value: b.showSubtotal,
-            onChanged: (v) => setState(() => _block = b..showSubtotal = v),
-          ),
-          SwitchListTile(
-            title: const Text('Строка скидки'),
-            value: b.showDiscountLine,
-            onChanged: (v) =>
-                setState(() => _block = b..showDiscountLine = v),
-          ),
-        ],
+        SwitchListTile(
+          title: const Text('Итого без скидки'),
+          value: b.showSubtotal,
+          onChanged: (v) => setState(() => _block = b..showSubtotal = v),
+        ),
+        SwitchListTile(
+          title: const Text('Строка скидки'),
+          value: b.showDiscountLine,
+          onChanged: (v) => setState(() => _block = b..showDiscountLine = v),
+        ),
+      ],
       _ => [const Text('Нет настроек для этого блока.')],
     };
   }
@@ -368,8 +341,7 @@ class _BlockConfigPanelState extends State<_BlockConfigPanel> {
   Widget _textField(String label, String value, ValueChanged<String> onChanged) {
     return TextFormField(
       initialValue: value,
-      decoration: InputDecoration(
-          labelText: label, border: const OutlineInputBorder()),
+      decoration: InputDecoration(labelText: label, border: const OutlineInputBorder()),
       onChanged: onChanged,
     );
   }

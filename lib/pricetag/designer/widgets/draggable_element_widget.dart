@@ -13,11 +13,7 @@ class DraggableElementWidget extends StatelessWidget {
   final CanvasElement element;
   final double scale; // canvas logical px (mm) → screen px
 
-  const DraggableElementWidget({
-    super.key,
-    required this.element,
-    required this.scale,
-  });
+  const DraggableElementWidget({super.key, required this.element, required this.scale});
 
   @override
   Widget build(BuildContext context) {
@@ -53,9 +49,7 @@ class DraggableElementWidget extends StatelessWidget {
             Positioned.fill(
               child: IgnorePointer(
                 child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.blue, width: 1.5),
-                  ),
+                  decoration: BoxDecoration(border: Border.all(color: Colors.blue, width: 1.5)),
                 ),
               ),
             ),
@@ -135,13 +129,17 @@ class _ResizeHandle extends StatelessWidget {
     double? left, top, right, bottom;
     switch (corner) {
       case _Corner.topLeft:
-        left = offset; top = offset;
+        left = offset;
+        top = offset;
       case _Corner.topRight:
-        right = offset; top = offset;
+        right = offset;
+        top = offset;
       case _Corner.bottomLeft:
-        left = offset; bottom = offset;
+        left = offset;
+        bottom = offset;
       case _Corner.bottomRight:
-        right = offset; bottom = offset;
+        right = offset;
+        bottom = offset;
     }
 
     return Positioned(
@@ -211,9 +209,7 @@ class _ResizeHandle extends StatelessWidget {
       newH = _kMinSize;
     }
 
-    final resized = element
-        .copyWithPosition(newX, newY)
-        .copyWithSize(newW, newH);
+    final resized = element.copyWithPosition(newX, newY).copyWithSize(newW, newH);
     notifier.updateElement(resized);
   }
 }
@@ -238,10 +234,7 @@ class _EditTextDialog {
           onSubmitted: (_) => _apply(ctx, element, ctrl.text, notifier),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Отмена'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Отмена')),
           FilledButton(
             onPressed: () => _apply(ctx, element, ctrl.text, notifier),
             child: const Text('Применить'),
@@ -251,8 +244,7 @@ class _EditTextDialog {
     );
   }
 
-  static void _apply(
-      BuildContext ctx, TextElement element, String text, dynamic notifier) {
+  static void _apply(BuildContext ctx, TextElement element, String text, dynamic notifier) {
     if (text.trim().isEmpty) return;
     notifier.updateElement(element.copyWith(text: text.trim()));
     Navigator.pop(ctx);
@@ -262,8 +254,7 @@ class _EditTextDialog {
 // ── Edit barcode dialog ───────────────────────────────────────────────────────
 
 class _EditBarcodeDialog {
-  static void show(
-      BuildContext context, BarcodeElement element, dynamic notifier) {
+  static void show(BuildContext context, BarcodeElement element, dynamic notifier) {
     final ctrl = TextEditingController(text: element.value);
     showDialog(
       context: context,
@@ -281,10 +272,7 @@ class _EditBarcodeDialog {
           onSubmitted: (_) => _apply(ctx, element, ctrl.text, notifier),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Отмена'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Отмена')),
           FilledButton(
             onPressed: () => _apply(ctx, element, ctrl.text, notifier),
             child: const Text('Применить'),
@@ -294,8 +282,7 @@ class _EditBarcodeDialog {
     );
   }
 
-  static void _apply(BuildContext ctx, BarcodeElement element, String value,
-      dynamic notifier) {
+  static void _apply(BuildContext ctx, BarcodeElement element, String value, dynamic notifier) {
     if (value.trim().isEmpty) return;
     notifier.updateElement(element.copyWith(value: value.trim()));
     Navigator.pop(ctx);

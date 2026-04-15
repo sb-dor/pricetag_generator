@@ -57,7 +57,10 @@ class _AppState extends State<App> {
         child: MaterialApp(
           title: 'Печать',
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo), useMaterial3: true),
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+            useMaterial3: true,
+          ),
           home: const HomeScreen(),
         ),
       ),
@@ -81,14 +84,18 @@ class HomeScreen extends StatelessWidget {
             icon: Icons.label_outline,
             title: 'Ценники',
             subtitle: 'Дизайнер ценников с печатью\nна Xprinter и Zebra',
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DesignerScreen())),
+            onTap: () =>
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const DesignerScreen())),
           ),
           const SizedBox(height: 16),
           _FeatureCard(
             icon: Icons.receipt_long_outlined,
             title: 'Чеки',
             subtitle: 'Печать чеков с каталогом товаров\nна Xprinter и Zebra',
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ReceiptMainScreen())),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ReceiptMainScreen()),
+            ),
           ),
         ],
       ),
@@ -102,7 +109,12 @@ class _FeatureCard extends StatelessWidget {
   final String subtitle;
   final VoidCallback onTap;
 
-  const _FeatureCard({required this.icon, required this.title, required this.subtitle, required this.onTap});
+  const _FeatureCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +134,10 @@ class _FeatureCard extends StatelessWidget {
                   children: [
                     Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 4),
-                    Text(subtitle, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                    Text(
+                      subtitle,
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    ),
                   ],
                 ),
               ),

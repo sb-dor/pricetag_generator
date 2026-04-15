@@ -68,9 +68,7 @@ class _PrinterSettingsScreenState extends State<PrinterSettingsScreen> {
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
-                ],
+                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
                 onChanged: settings.setHost,
               ),
               const SizedBox(height: 12),
@@ -99,13 +97,15 @@ class _PrinterSettingsScreenState extends State<PrinterSettingsScreen> {
                 },
                 child: Column(
                   children: LabelSize.presets
-                      .map((size) => RadioListTile<LabelSize>(
-                            title: Text(size.name),
-                            subtitle: Text(
-                              '${size.widthMm.toInt()}×${size.heightMm.toInt()} мм  •  ${size.dpi} DPI',
-                            ),
-                            value: size,
-                          ))
+                      .map(
+                        (size) => RadioListTile<LabelSize>(
+                          title: Text(size.name),
+                          subtitle: Text(
+                            '${size.widthMm.toInt()}×${size.heightMm.toInt()} мм  •  ${size.dpi} DPI',
+                          ),
+                          value: size,
+                        ),
+                      )
                       .toList(),
                 ),
               ),
@@ -134,13 +134,19 @@ class _PrinterSettingsScreenState extends State<PrinterSettingsScreen> {
           children: [
             TextField(
               controller: wCtrl,
-              decoration: const InputDecoration(labelText: 'Ширина (мм)', border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                labelText: 'Ширина (мм)',
+                border: OutlineInputBorder(),
+              ),
               keyboardType: TextInputType.number,
             ),
             const SizedBox(height: 12),
             TextField(
               controller: hCtrl,
-              decoration: const InputDecoration(labelText: 'Высота (мм)', border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                labelText: 'Высота (мм)',
+                border: OutlineInputBorder(),
+              ),
               keyboardType: TextInputType.number,
             ),
           ],
@@ -153,7 +159,12 @@ class _PrinterSettingsScreenState extends State<PrinterSettingsScreen> {
               final h = double.tryParse(hCtrl.text);
               if (w != null && h != null && w > 0 && h > 0) {
                 canvasNotifier.setLabelSize(
-                  LabelSize(name: '${w.toInt()}×${h.toInt()} мм', widthMm: w, heightMm: h, dpi: 203),
+                  LabelSize(
+                    name: '${w.toInt()}×${h.toInt()} мм',
+                    widthMm: w,
+                    heightMm: h,
+                    dpi: 203,
+                  ),
                 );
                 Navigator.pop(ctx);
               }

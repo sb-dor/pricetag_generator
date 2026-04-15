@@ -28,15 +28,15 @@ class ZebraService implements PrinterService {
     // ZPL label
     final zpl = StringBuffer();
     zpl.writeln('^XA');
-    zpl.writeln('^CI28');                                         // UTF-8 encoding
-    zpl.writeln('^MMT');                                          // media type thermal
-    zpl.writeln('^PW${size.widthPx.round()}');                   // label width in dots
-    zpl.writeln('^LL${size.heightPx.round()}');                  // label length in dots
+    zpl.writeln('^CI28'); // UTF-8 encoding
+    zpl.writeln('^MMT'); // media type thermal
+    zpl.writeln('^PW${size.widthPx.round()}'); // label width in dots
+    zpl.writeln('^LL${size.heightPx.round()}'); // label length in dots
     zpl.writeln('^LS0');
     zpl.writeln('^FO0,0');
     // ^GF A=ASCII-hex, total bytes, row bytes, width dots, data
     zpl.writeln('^GFA,$totalBytes,$totalBytes,$rowBytes,$hexData');
-    zpl.writeln('^PQ1');                                          // print 1 copy
+    zpl.writeln('^PQ1'); // print 1 copy
     zpl.writeln('^XZ');
 
     final bytes = utf8.encode(zpl.toString());

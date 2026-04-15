@@ -28,6 +28,5 @@ class AppScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(AppScope oldWidget) =>
-      canvasNotifier != oldWidget.canvasNotifier ||
-      printerSettings != oldWidget.printerSettings;
+      canvasNotifier != oldWidget.canvasNotifier || printerSettings != oldWidget.printerSettings;
 }

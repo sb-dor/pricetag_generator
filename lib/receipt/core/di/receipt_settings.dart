@@ -15,9 +15,28 @@ class ReceiptSettings extends ChangeNotifier {
   ReceiptPrinterType get printerType => _printerType;
   int get paperWidthMm => _paperWidthMm;
 
-  void setStoreName(String v) { _storeName = v; notifyListeners(); }
-  void setHost(String v) { _host = v; notifyListeners(); }
-  void setPort(int v) { _port = v; notifyListeners(); }
-  void setPrinterType(ReceiptPrinterType v) { _printerType = v; notifyListeners(); }
-  void setPaperWidth(int mm) { _paperWidthMm = mm; notifyListeners(); }
+  void setStoreName(String v) {
+    _storeName = v;
+    notifyListeners();
+  }
+
+  void setHost(String v) {
+    _host = v;
+    notifyListeners();
+  }
+
+  void setPort(int v) {
+    _port = v;
+    notifyListeners();
+  }
+
+  void setPrinterType(ReceiptPrinterType v) {
+    _printerType = v;
+    notifyListeners();
+  }
+
+  void setPaperWidth(int mm) {
+    _paperWidthMm = mm;
+    notifyListeners();
+  }
 }

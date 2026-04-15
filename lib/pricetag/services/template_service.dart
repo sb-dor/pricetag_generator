@@ -18,20 +18,20 @@ class TemplateModel {
   });
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'savedAt': savedAt.toIso8601String(),
-        'labelSize': labelSize.toJson(),
-        'elements': elements.map((e) => e.toJson()).toList(),
-      };
+    'name': name,
+    'savedAt': savedAt.toIso8601String(),
+    'labelSize': labelSize.toJson(),
+    'elements': elements.map((e) => e.toJson()).toList(),
+  };
 
   factory TemplateModel.fromJson(Map<String, dynamic> json) => TemplateModel(
-        name: json['name'] as String,
-        savedAt: DateTime.parse(json['savedAt'] as String),
-        labelSize: LabelSize.fromJson(json['labelSize'] as Map<String, dynamic>),
-        elements: (json['elements'] as List)
-            .map((e) => CanvasElement.fromJson(e as Map<String, dynamic>))
-            .toList(),
-      );
+    name: json['name'] as String,
+    savedAt: DateTime.parse(json['savedAt'] as String),
+    labelSize: LabelSize.fromJson(json['labelSize'] as Map<String, dynamic>),
+    elements: (json['elements'] as List)
+        .map((e) => CanvasElement.fromJson(e as Map<String, dynamic>))
+        .toList(),
+  );
 }
 
 class TemplateService {
@@ -44,12 +44,14 @@ class TemplateService {
 
     // Replace existing template with same name if exists
     templates.removeWhere((t) => t.name == name);
-    templates.add(TemplateModel(
-      name: name,
-      labelSize: notifier.labelSize,
-      elements: List.of(notifier.elements),
-      savedAt: DateTime.now(),
-    ));
+    templates.add(
+      TemplateModel(
+        name: name,
+        labelSize: notifier.labelSize,
+        elements: List.of(notifier.elements),
+        savedAt: DateTime.now(),
+      ),
+    );
 
     final json = jsonEncode(templates.map((t) => t.toJson()).toList());
     await prefs.setString(_key, json);
@@ -80,9 +82,6 @@ class TemplateService {
     final prefs = await SharedPreferences.getInstance();
     final templates = await loadAll();
     templates.removeWhere((t) => t.name == name);
-    await prefs.setString(
-      _key,
-      jsonEncode(templates.map((t) => t.toJson()).toList()),
-    );
+    await prefs.setString(_key, jsonEncode(templates.map((t) => t.toJson()).toList()));
   }
 }

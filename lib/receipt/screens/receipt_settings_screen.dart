@@ -49,8 +49,9 @@ class _ReceiptSettingsScreenState extends State<ReceiptSettingsScreen> {
             TextField(
               controller: _storeCtrl,
               decoration: const InputDecoration(
-                  labelText: 'Название магазина',
-                  border: OutlineInputBorder()),
+                labelText: 'Название магазина',
+                border: OutlineInputBorder(),
+              ),
               onChanged: settings.setStoreName,
             ),
             const SizedBox(height: 24),
@@ -60,11 +61,8 @@ class _ReceiptSettingsScreenState extends State<ReceiptSettingsScreen> {
             const SizedBox(height: 8),
             SegmentedButton<ReceiptPrinterType>(
               segments: const [
-                ButtonSegment(
-                    value: ReceiptPrinterType.xprinter,
-                    label: Text('Xprinter')),
-                ButtonSegment(
-                    value: ReceiptPrinterType.zebra, label: Text('Zebra')),
+                ButtonSegment(value: ReceiptPrinterType.xprinter, label: Text('Xprinter')),
+                ButtonSegment(value: ReceiptPrinterType.zebra, label: Text('Zebra')),
               ],
               selected: {settings.printerType},
               onSelectionChanged: (s) => settings.setPrinterType(s.first),
@@ -72,28 +70,27 @@ class _ReceiptSettingsScreenState extends State<ReceiptSettingsScreen> {
             const SizedBox(height: 24),
 
             // ── Connection ────────────────────────────────────────────────
-            const Text('Подключение (WiFi/TCP)',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text('Подключение (WiFi/TCP)', style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             TextField(
               controller: _hostCtrl,
               decoration: const InputDecoration(
-                  labelText: 'IP адрес',
-                  hintText: '192.168.1.100',
-                  border: OutlineInputBorder()),
+                labelText: 'IP адрес',
+                hintText: '192.168.1.100',
+                border: OutlineInputBorder(),
+              ),
               keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
-              ],
+              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
               onChanged: settings.setHost,
             ),
             const SizedBox(height: 12),
             TextField(
               controller: _portCtrl,
               decoration: const InputDecoration(
-                  labelText: 'Порт',
-                  hintText: '9100',
-                  border: OutlineInputBorder()),
+                labelText: 'Порт',
+                hintText: '9100',
+                border: OutlineInputBorder(),
+              ),
               keyboardType: TextInputType.number,
               onChanged: (v) {
                 final p = int.tryParse(v);
@@ -103,8 +100,7 @@ class _ReceiptSettingsScreenState extends State<ReceiptSettingsScreen> {
             const SizedBox(height: 24),
 
             // ── Paper width ───────────────────────────────────────────────
-            const Text('Ширина бумаги',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text('Ширина бумаги', style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             SegmentedButton<int>(
               segments: const [

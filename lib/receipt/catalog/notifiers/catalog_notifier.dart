@@ -14,18 +14,13 @@ class CatalogNotifier extends ChangeNotifier {
     final raw = prefs.getString(_key);
     if (raw == null) return;
     final list = jsonDecode(raw) as List;
-    _products = list
-        .map((e) => Product.fromJson(e as Map<String, dynamic>))
-        .toList();
+    _products = list.map((e) => Product.fromJson(e as Map<String, dynamic>)).toList();
     notifyListeners();
   }
 
   Future<void> _persist() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
-      _key,
-      jsonEncode(_products.map((p) => p.toJson()).toList()),
-    );
+    await prefs.setString(_key, jsonEncode(_products.map((p) => p.toJson()).toList()));
   }
 
   void add(Product product) {
@@ -51,8 +46,6 @@ class CatalogNotifier extends ChangeNotifier {
   List<Product> search(String query) {
     final q = query.trim().toLowerCase();
     if (q.isEmpty) return products;
-    return _products
-        .where((p) => p.name.toLowerCase().contains(q))
-        .toList();
+    return _products.where((p) => p.name.toLowerCase().contains(q)).toList();
   }
 }

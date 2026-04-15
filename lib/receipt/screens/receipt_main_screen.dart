@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../pricetag/transport/tcp_transport.dart';
 import '../catalog/screens/catalog_screen.dart';
 import '../core/di/receipt_scope.dart';
@@ -51,10 +52,8 @@ class _ReceiptMainScreenState extends State<ReceiptMainScreen> {
           IconButton(
             icon: const Icon(Icons.inventory_2_outlined),
             tooltip: 'Каталог товаров',
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const CatalogScreen()),
-            ),
+            onPressed: () =>
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const CatalogScreen())),
           ),
           // Settings
           IconButton(
@@ -62,8 +61,7 @@ class _ReceiptMainScreenState extends State<ReceiptMainScreen> {
             tooltip: 'Настройки',
             onPressed: () => Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (_) => const ReceiptSettingsScreen()),
+              MaterialPageRoute(builder: (_) => const ReceiptSettingsScreen()),
             ),
           ),
         ],
@@ -76,8 +74,7 @@ class _ReceiptMainScreenState extends State<ReceiptMainScreen> {
             builder: (_, _) => Container(
               width: double.infinity,
               color: Theme.of(context).colorScheme.primaryContainer,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Text(
                 scope.settings.storeName,
                 style: TextStyle(
@@ -97,19 +94,18 @@ class _ReceiptMainScreenState extends State<ReceiptMainScreen> {
                 final notifier = scope.receiptNotifier;
                 if (notifier.isEmpty) {
                   return const Center(
-                    child: Text('Нажмите «+ Товар» чтобы добавить позицию',
-                        style: TextStyle(color: Colors.grey)),
+                    child: Text(
+                      'Нажмите «+ Товар» чтобы добавить позицию',
+                      style: TextStyle(color: Colors.grey),
+                    ),
                   );
                 }
                 return ListView.separated(
                   padding: const EdgeInsets.only(bottom: 8),
                   itemCount: notifier.items.length,
                   separatorBuilder: (_, _) => const Divider(height: 1),
-                  itemBuilder: (_, i) => _ReceiptItemTile(
-                    item: notifier.items[i],
-                    index: i,
-                    notifier: notifier,
-                  ),
+                  itemBuilder: (_, i) =>
+                      _ReceiptItemTile(item: notifier.items[i], index: i, notifier: notifier),
                 );
               },
             ),
@@ -157,9 +153,10 @@ class _ReceiptMainScreenState extends State<ReceiptMainScreen> {
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                   child: Row(
                     children: [
-                      const Text('Выбор шаблона',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      const Text(
+                        'Выбор шаблона',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
                       const Spacer(),
                       TextButton.icon(
                         icon: const Icon(Icons.add),
@@ -171,14 +168,10 @@ class _ReceiptMainScreenState extends State<ReceiptMainScreen> {
                             MaterialPageRoute(
                               builder: (_) => TemplateEditorScreen(
                                 template: ReceiptTemplate(
-                                  id: DateTime.now()
-                                      .microsecondsSinceEpoch
-                                      .toString(),
+                                  id: DateTime.now().microsecondsSinceEpoch.toString(),
                                   name: 'Новый шаблон',
-                                  paperWidthMm: ReceiptTemplate
-                                      .defaultTemplate.paperWidthMm,
-                                  blocks: List.of(
-                                      ReceiptTemplate.defaultTemplate.blocks),
+                                  paperWidthMm: ReceiptTemplate.defaultTemplate.paperWidthMm,
+                                  blocks: List.of(ReceiptTemplate.defaultTemplate.blocks),
                                 ),
                               ),
                             ),
@@ -195,14 +188,11 @@ class _ReceiptMainScreenState extends State<ReceiptMainScreen> {
                     itemCount: templates.length,
                     itemBuilder: (_, i) {
                       final t = templates[i];
-                      final isSelected =
-                          scope.receiptNotifier.template.id == t.id;
+                      final isSelected = scope.receiptNotifier.template.id == t.id;
                       return ListTile(
                         leading: Icon(
                           Icons.receipt_long_outlined,
-                          color: isSelected
-                              ? Theme.of(context).colorScheme.primary
-                              : null,
+                          color: isSelected ? Theme.of(context).colorScheme.primary : null,
                         ),
                         title: Text(t.name),
                         subtitle: Text('${t.paperWidthMm} мм'),
@@ -215,8 +205,7 @@ class _ReceiptMainScreenState extends State<ReceiptMainScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) =>
-                                          TemplateEditorScreen(template: t),
+                                      builder: (_) => TemplateEditorScreen(template: t),
                                     ),
                                   );
                                 },
@@ -252,8 +241,7 @@ class _ReceiptMainScreenState extends State<ReceiptMainScreen> {
         expand: false,
         builder: (_, ctrl) => StatefulBuilder(
           builder: (ctx, setS) {
-            final results =
-                scope.catalogNotifier.search(searchCtrl.text);
+            final results = scope.catalogNotifier.search(searchCtrl.text);
             return Column(
               children: [
                 Padding(
@@ -280,8 +268,7 @@ class _ReceiptMainScreenState extends State<ReceiptMainScreen> {
                             final p = results[i];
                             return ListTile(
                               title: Text(p.name),
-                              subtitle: Text(
-                                  '${p.price.toStringAsFixed(2)} ₽ / ${p.unit}'),
+                              subtitle: Text('${p.price.toStringAsFixed(2)} ₽ / ${p.unit}'),
                               onTap: () {
                                 scope.receiptNotifier.addProduct(p);
                                 Navigator.pop(context);
@@ -303,27 +290,29 @@ class _ReceiptMainScreenState extends State<ReceiptMainScreen> {
   Future<void> _print(BuildContext context) async {
     final scope = ReceiptScope.read(context);
     final settings = scope.settings;
-    final receipt =
-        scope.receiptNotifier.buildReceipt(settings.storeName);
+    final receipt = scope.receiptNotifier.buildReceipt(settings.storeName);
     final template = scope.receiptNotifier.template;
-    final transport =
-        TcpTransport(host: settings.host, port: settings.port);
+    final transport = TcpTransport(host: settings.host, port: settings.port);
     final messenger = ScaffoldMessenger.of(context);
 
     setState(() => _isBusy = true);
     try {
       if (settings.printerType == ReceiptPrinterType.xprinter) {
-        await EscPosReceiptService()
-            .printReceipt(receipt: receipt, template: template, transport: transport);
+        await EscPosReceiptService().printReceipt(
+          receipt: receipt,
+          template: template,
+          transport: transport,
+        );
       } else {
-        await ZplReceiptService()
-            .printReceipt(receipt: receipt, template: template, transport: transport);
+        await ZplReceiptService().printReceipt(
+          receipt: receipt,
+          template: template,
+          transport: transport,
+        );
       }
-      messenger.showSnackBar(
-          const SnackBar(content: Text('Чек отправлен на принтер')));
+      messenger.showSnackBar(const SnackBar(content: Text('Чек отправлен на принтер')));
     } catch (e) {
-      messenger.showSnackBar(SnackBar(
-          content: Text('Ошибка: $e'), backgroundColor: Colors.red));
+      messenger.showSnackBar(SnackBar(content: Text('Ошибка: $e'), backgroundColor: Colors.red));
     } finally {
       if (mounted) setState(() => _isBusy = false);
     }
@@ -335,9 +324,7 @@ class _ReceiptMainScreenState extends State<ReceiptMainScreen> {
       builder: (ctx) => AlertDialog(
         title: const Text('Очистить чек?'),
         actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('Отмена')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Отмена')),
           FilledButton(
             onPressed: () {
               ReceiptScope.read(context).receiptNotifier.clear();
@@ -358,11 +345,7 @@ class _ReceiptItemTile extends StatelessWidget {
   final int index;
   final ReceiptNotifier notifier;
 
-  const _ReceiptItemTile({
-    required this.item,
-    required this.index,
-    required this.notifier,
-  });
+  const _ReceiptItemTile({required this.item, required this.index, required this.notifier});
 
   @override
   Widget build(BuildContext context) {
@@ -375,12 +358,12 @@ class _ReceiptItemTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(item.product.name,
-                    style: const TextStyle(fontWeight: FontWeight.w500)),
+                Text(item.product.name, style: const TextStyle(fontWeight: FontWeight.w500)),
                 if (item.hasDiscount)
-                  Text('Скидка ${item.discountPct!.toStringAsFixed(0)}%',
-                      style: TextStyle(
-                          fontSize: 12, color: Colors.green.shade700)),
+                  Text(
+                    'Скидка ${item.discountPct!.toStringAsFixed(0)}%',
+                    style: TextStyle(fontSize: 12, color: Colors.green.shade700),
+                  ),
               ],
             ),
           ),
@@ -389,8 +372,7 @@ class _ReceiptItemTile extends StatelessWidget {
           _QtyControl(
             qty: item.qty,
             unit: item.product.unit,
-            onChanged: (q) =>
-                notifier.updateItem(index, item.copyWith(qty: q)),
+            onChanged: (q) => notifier.updateItem(index, item.copyWith(qty: q)),
           ),
 
           const SizedBox(width: 8),
@@ -430,8 +412,7 @@ class _ReceiptItemTile extends StatelessWidget {
   }
 
   void _editDiscount(BuildContext context) {
-    final ctrl = TextEditingController(
-        text: item.discountPct?.toStringAsFixed(0) ?? '');
+    final ctrl = TextEditingController(text: item.discountPct?.toStringAsFixed(0) ?? '');
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -441,10 +422,11 @@ class _ReceiptItemTile extends StatelessWidget {
           autofocus: true,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           decoration: const InputDecoration(
-              labelText: 'Скидка %',
-              hintText: '10',
-              suffixText: '%',
-              border: OutlineInputBorder()),
+            labelText: 'Скидка %',
+            hintText: '10',
+            suffixText: '%',
+            border: OutlineInputBorder(),
+          ),
         ),
         actions: [
           TextButton(
@@ -458,8 +440,7 @@ class _ReceiptItemTile extends StatelessWidget {
             onPressed: () {
               final pct = double.tryParse(ctrl.text.replaceAll(',', '.'));
               if (pct != null && pct >= 0 && pct <= 100) {
-                notifier.updateItem(
-                    index, item.copyWith(discountPct: pct));
+                notifier.updateItem(index, item.copyWith(discountPct: pct));
               }
               Navigator.pop(ctx);
             },
@@ -478,21 +459,18 @@ class _QtyControl extends StatelessWidget {
   final String unit;
   final ValueChanged<double> onChanged;
 
-  const _QtyControl(
-      {required this.qty, required this.unit, required this.onChanged});
+  const _QtyControl({required this.qty, required this.unit, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
-    final label =
-        qty == qty.truncateToDouble() ? qty.toInt().toString() : qty.toString();
+    final label = qty == qty.truncateToDouble() ? qty.toInt().toString() : qty.toString();
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         _btn(Icons.remove, () => onChanged((qty - 1).clamp(1, 999))),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 6),
-          child: Text('$label $unit',
-              style: const TextStyle(fontWeight: FontWeight.w500)),
+          child: Text('$label $unit', style: const TextStyle(fontWeight: FontWeight.w500)),
         ),
         _btn(Icons.add, () => onChanged(qty + 1)),
       ],
@@ -500,13 +478,10 @@ class _QtyControl extends StatelessWidget {
   }
 
   Widget _btn(IconData icon, VoidCallback onTap) => InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(4),
-        child: Padding(
-          padding: const EdgeInsets.all(4),
-          child: Icon(icon, size: 18),
-        ),
-      );
+    onTap: onTap,
+    borderRadius: BorderRadius.circular(4),
+    child: Padding(padding: const EdgeInsets.all(4), child: Icon(icon, size: 18)),
+  );
 }
 
 // ── Totals summary ────────────────────────────────────────────────────────────
@@ -526,25 +501,20 @@ class _TotalsSummary extends StatelessWidget {
       child: Column(
         children: [
           if (notifier.hasDiscount) ...[
-            _row('Итого без скидки',
-                '${notifier.subtotal.toStringAsFixed(2)} ₽'),
-            _row('Скидка',
-                '-${notifier.totalDiscount.toStringAsFixed(2)} ₽',
-                color: Colors.green.shade700),
+            _row('Итого без скидки', '${notifier.subtotal.toStringAsFixed(2)} ₽'),
+            _row(
+              'Скидка',
+              '-${notifier.totalDiscount.toStringAsFixed(2)} ₽',
+              color: Colors.green.shade700,
+            ),
           ],
-          _row(
-            'ИТОГО',
-            '${notifier.total.toStringAsFixed(2)} ₽',
-            bold: true,
-            large: true,
-          ),
+          _row('ИТОГО', '${notifier.total.toStringAsFixed(2)} ₽', bold: true, large: true),
         ],
       ),
     );
   }
 
-  Widget _row(String label, String value,
-      {bool bold = false, bool large = false, Color? color}) {
+  Widget _row(String label, String value, {bool bold = false, bool large = false, Color? color}) {
     final style = TextStyle(
       fontWeight: bold ? FontWeight.bold : FontWeight.normal,
       fontSize: large ? 18 : 14,
@@ -589,10 +559,7 @@ class _BottomBar extends StatelessWidget {
               label: const Text('Товар'),
             ),
             const SizedBox(width: 8),
-            OutlinedButton(
-              onPressed: onClear,
-              child: const Icon(Icons.delete_sweep_outlined),
-            ),
+            OutlinedButton(onPressed: onClear, child: const Icon(Icons.delete_sweep_outlined)),
             const SizedBox(width: 8),
             Expanded(
               child: FilledButton.icon(
@@ -601,8 +568,7 @@ class _BottomBar extends StatelessWidget {
                     ? const SizedBox(
                         width: 16,
                         height: 16,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.white),
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                       )
                     : const Icon(Icons.print_outlined),
                 label: Text(isBusy ? 'Печать...' : 'Печать чека'),

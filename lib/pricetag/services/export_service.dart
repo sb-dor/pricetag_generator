@@ -37,10 +37,9 @@ class ExportService {
   Future<void> saveAsImage(Uint8List pngBytes, LabelSize size) async {
     final filename = 'pricetag_${size.widthMm.toInt()}x${size.heightMm.toInt()}mm.png';
     final file = await _writeTempFile(filename, pngBytes);
-    await Share.shareXFiles(
-      [XFile(file.path, mimeType: 'image/png')],
-      subject: 'Ценник ${size.name}',
-    );
+    await Share.shareXFiles([
+      XFile(file.path, mimeType: 'image/png'),
+    ], subject: 'Ценник ${size.name}');
   }
 
   Future<File> _writeTempFile(String filename, Uint8List bytes) async {

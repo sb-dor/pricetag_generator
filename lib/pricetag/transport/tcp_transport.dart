@@ -22,13 +22,10 @@ class TcpTransport implements PrinterTransport {
     final valid = RegExp(r'^[a-zA-Z0-9.\-_]+$');
     if (host.isEmpty || !valid.hasMatch(host)) {
       throw Exception(
-          'Некорректный IP адрес: "$host". Откройте настройки и введите правильный IP.');
+        'Некорректный IP адрес: "$host". Откройте настройки и введите правильный IP.',
+      );
     }
-    _socket = await Socket.connect(
-      host,
-      port,
-      timeout: const Duration(seconds: 5),
-    );
+    _socket = await Socket.connect(host, port, timeout: const Duration(seconds: 5));
   }
 
   @override

@@ -5,11 +5,7 @@ class Receipt {
   final List<ReceiptItem> items;
   final DateTime printedAt;
 
-  const Receipt({
-    required this.storeName,
-    required this.items,
-    required this.printedAt,
-  });
+  const Receipt({required this.storeName, required this.items, required this.printedAt});
 
   double get subtotal => items.fold(0.0, (s, i) => s + i.lineSubtotal);
   double get totalDiscount => items.fold(0.0, (s, i) => s + i.lineDiscount);

@@ -15,11 +15,7 @@ class ElementToolbar extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         child: Row(
           children: [
-            _ToolButton(
-              icon: Icons.qr_code,
-              label: 'Штрихкод',
-              onTap: () => _addBarcode(context),
-            ),
+            _ToolButton(icon: Icons.qr_code, label: 'Штрихкод', onTap: () => _addBarcode(context)),
             _ToolButton(
               icon: Icons.label_outline,
               label: 'Название',
@@ -57,15 +53,17 @@ class ElementToolbar extends StatelessWidget {
     final notifier = AppScope.read(context).canvasNotifier;
     final w = notifier.labelSize.widthMm;
     final h = notifier.labelSize.heightMm;
-    notifier.addElement(BarcodeElement(
-      id: _uid(),
-      x: w * 0.1,
-      y: h * 0.1,
-      width: w * 0.5,        // 50% ширины — разумный дефолт
-      height: h * 0.4,       // 40% высоты
-      barcodeType: Barcode.ean13(),
-      value: '5901234123457',
-    ));
+    notifier.addElement(
+      BarcodeElement(
+        id: _uid(),
+        x: w * 0.1,
+        y: h * 0.1,
+        width: w * 0.5, // 50% ширины — разумный дефолт
+        height: h * 0.4, // 40% высоты
+        barcodeType: Barcode.ean13(),
+        value: '5901234123457',
+      ),
+    );
   }
 
   void _addText(BuildContext context, TextRole role, String defaultText) {
@@ -75,30 +73,32 @@ class ElementToolbar extends StatelessWidget {
 
     // Размеры в мм, не в экранных пикселях — масштабируются под ценник
     final (elemW, elemH) = switch (role) {
-      TextRole.price       => (w * 0.45, h * 0.22),
+      TextRole.price => (w * 0.45, h * 0.22),
       TextRole.productName => (w * 0.85, h * 0.20),
-      TextRole.discount    => (w * 0.30, h * 0.20),
-      TextRole.custom      => (w * 0.50, h * 0.18),
+      TextRole.discount => (w * 0.30, h * 0.20),
+      TextRole.custom => (w * 0.50, h * 0.18),
     };
 
     // fontSize в мм (будет масштабироваться через scale)
     final fontSize = switch (role) {
-      TextRole.price       => h * 0.14,
+      TextRole.price => h * 0.14,
       TextRole.productName => h * 0.10,
-      _                    => h * 0.09,
+      _ => h * 0.09,
     };
 
-    notifier.addElement(TextElement(
-      id: _uid(),
-      x: w * 0.05,
-      y: h * 0.05,
-      width: elemW,
-      height: elemH,
-      text: defaultText,
-      role: role,
-      fontSize: fontSize,
-      isBold: role == TextRole.price || role == TextRole.productName,
-    ));
+    notifier.addElement(
+      TextElement(
+        id: _uid(),
+        x: w * 0.05,
+        y: h * 0.05,
+        width: elemW,
+        height: elemH,
+        text: defaultText,
+        role: role,
+        fontSize: fontSize,
+        isBold: role == TextRole.price || role == TextRole.productName,
+      ),
+    );
   }
 
   void _deleteSelected(BuildContext context) {
@@ -116,12 +116,7 @@ class _ToolButton extends StatelessWidget {
   final VoidCallback onTap;
   final Color? color;
 
-  const _ToolButton({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-    this.color,
-  });
+  const _ToolButton({required this.icon, required this.label, required this.onTap, this.color});
 
   @override
   Widget build(BuildContext context) {

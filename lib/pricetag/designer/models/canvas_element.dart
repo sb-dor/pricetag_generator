@@ -82,27 +82,27 @@ class BarcodeElement extends CanvasElement {
 
   @override
   Map<String, dynamic> toJson() => {
-        'type': 'barcode',
-        'id': id,
-        'x': x,
-        'y': y,
-        'width': width,
-        'height': height,
-        'barcodeType': barcodeTypeToKey(barcodeType),
-        'value': value,
-        'showText': showText,
-      };
+    'type': 'barcode',
+    'id': id,
+    'x': x,
+    'y': y,
+    'width': width,
+    'height': height,
+    'barcodeType': barcodeTypeToKey(barcodeType),
+    'value': value,
+    'showText': showText,
+  };
 
   factory BarcodeElement.fromJson(Map<String, dynamic> json) => BarcodeElement(
-        id: json['id'] as String,
-        x: (json['x'] as num).toDouble(),
-        y: (json['y'] as num).toDouble(),
-        width: (json['width'] as num).toDouble(),
-        height: (json['height'] as num).toDouble(),
-        barcodeType: barcodeTypeFromKey(json['barcodeType'] as String),
-        value: json['value'] as String,
-        showText: json['showText'] as bool? ?? true,
-      );
+    id: json['id'] as String,
+    x: (json['x'] as num).toDouble(),
+    y: (json['y'] as num).toDouble(),
+    width: (json['width'] as num).toDouble(),
+    height: (json['height'] as num).toDouble(),
+    barcodeType: barcodeTypeFromKey(json['barcodeType'] as String),
+    value: json['value'] as String,
+    showText: json['showText'] as bool? ?? true,
+  );
 }
 
 // ── Text ─────────────────────────────────────────────────────────────────────
@@ -133,8 +133,7 @@ class TextElement extends CanvasElement {
   TextElement copyWithPosition(double x, double y) => copyWith(x: x, y: y);
 
   @override
-  TextElement copyWithSize(double width, double height) =>
-      copyWith(width: width, height: height);
+  TextElement copyWithSize(double width, double height) => copyWith(width: width, height: height);
 
   TextElement copyWith({
     String? text,
@@ -163,46 +162,46 @@ class TextElement extends CanvasElement {
 
   @override
   Map<String, dynamic> toJson() => {
-        'type': 'text',
-        'id': id,
-        'x': x,
-        'y': y,
-        'width': width,
-        'height': height,
-        'text': text,
-        'fontSize': fontSize,
-        'isBold': isBold,
-        'color': color.toARGB32(),
-        'role': role.name,
-      };
+    'type': 'text',
+    'id': id,
+    'x': x,
+    'y': y,
+    'width': width,
+    'height': height,
+    'text': text,
+    'fontSize': fontSize,
+    'isBold': isBold,
+    'color': color.toARGB32(),
+    'role': role.name,
+  };
 
   factory TextElement.fromJson(Map<String, dynamic> json) => TextElement(
-        id: json['id'] as String,
-        x: (json['x'] as num).toDouble(),
-        y: (json['y'] as num).toDouble(),
-        width: (json['width'] as num).toDouble(),
-        height: (json['height'] as num).toDouble(),
-        text: json['text'] as String,
-        fontSize: (json['fontSize'] as num).toDouble(),
-        isBold: json['isBold'] as bool? ?? false,
-        color: Color(json['color'] as int),
-        role: TextRole.values.byName(json['role'] as String),
-      );
+    id: json['id'] as String,
+    x: (json['x'] as num).toDouble(),
+    y: (json['y'] as num).toDouble(),
+    width: (json['width'] as num).toDouble(),
+    height: (json['height'] as num).toDouble(),
+    text: json['text'] as String,
+    fontSize: (json['fontSize'] as num).toDouble(),
+    isBold: json['isBold'] as bool? ?? false,
+    color: Color(json['color'] as int),
+    role: TextRole.values.byName(json['role'] as String),
+  );
 }
 
 // ── Barcode type serialization helpers ───────────────────────────────────────
 
 const _barcodeKeys = <String, Barcode Function()>{
-  'ean13':   Barcode.ean13,
-  'ean8':    Barcode.ean8,
-  'qrCode':  Barcode.qrCode,
+  'ean13': Barcode.ean13,
+  'ean8': Barcode.ean8,
+  'qrCode': Barcode.qrCode,
   'code128': Barcode.code128,
-  'code39':  Barcode.code39,
-  'upca':    Barcode.upcA,
-  'upce':    Barcode.upcE,
-  'pdf417':  Barcode.pdf417,
+  'code39': Barcode.code39,
+  'upca': Barcode.upcA,
+  'upce': Barcode.upcE,
+  'pdf417': Barcode.pdf417,
   'dataMatrix': Barcode.dataMatrix,
-  'aztec':   Barcode.aztec,
+  'aztec': Barcode.aztec,
 };
 
 String barcodeTypeToKey(Barcode barcode) {
@@ -212,5 +211,4 @@ String barcodeTypeToKey(Barcode barcode) {
   return 'ean13'; // fallback
 }
 
-Barcode barcodeTypeFromKey(String key) =>
-    (_barcodeKeys[key] ?? Barcode.ean13)();
+Barcode barcodeTypeFromKey(String key) => (_barcodeKeys[key] ?? Barcode.ean13)();

@@ -151,7 +151,7 @@ class EscPosReceiptService implements ReceiptPrinterService {
       ..addAll(_lf);
 
     if (block.showDiscount && item.hasDiscount) {
-      final disc = '  Skidka ${item.discountPct!.toStringAsFixed(0)}%:';
+      final disc = '  Скидка ${item.discountPct!.toStringAsFixed(0)}%:';
       final discAmt = '-${_fmtMoney(item.lineDiscount)}r.';
       buf
         ..addAll(_left)
@@ -162,21 +162,22 @@ class EscPosReceiptService implements ReceiptPrinterService {
 
   void _writeTotals(List<int> buf, TotalsBlock block, Receipt receipt, int cols) {
     if (block.showSubtotal && receipt.hasDiscount) {
+      // Itogo bez skidki
       buf
         ..addAll(_left)
-        ..addAll(_encode(_padRow('Itogo bez skidki:', '${_fmtMoney(receipt.subtotal)}r.', cols)))
+        ..addAll(_encode(_padRow('Итого без скидки:', '${_fmtMoney(receipt.subtotal)}r.', cols)))
         ..addAll(_lf);
     }
     if (block.showDiscountLine && receipt.hasDiscount) {
       buf
         ..addAll(_left)
-        ..addAll(_encode(_padRow('Skidka:', '-${_fmtMoney(receipt.totalDiscount)}r.', cols)))
+        ..addAll(_encode(_padRow('Скидка:', '-${_fmtMoney(receipt.totalDiscount)}r.', cols)))
         ..addAll(_lf);
     }
     buf
       ..addAll(_left)
       ..addAll(_boldOn)
-      ..addAll(_encode(_padRow('ITOGO:', '${_fmtMoney(receipt.total)}r.', cols)))
+      ..addAll(_encode(_padRow('ИТОГО:', '${_fmtMoney(receipt.total)}р.', cols)))
       ..addAll(_boldOff)
       ..addAll(_lf);
   }

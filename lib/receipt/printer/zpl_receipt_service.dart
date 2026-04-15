@@ -30,14 +30,18 @@ class ZplReceiptService implements ReceiptPrinterService {
     int y = 30;
 
     buf.writeln('^XA');
-    buf.writeln('^CI28');           // UTF-8
-    buf.writeln('^PW$widthDots');   // paper width in dots
-    buf.writeln('^LL2000');         // label length (generous; auto-cut at ^XZ)
+    buf.writeln('^CI28'); // UTF-8
+    buf.writeln('^PW$widthDots'); // paper width in dots
+    buf.writeln('^LL2000'); // label length (generous; auto-cut at ^XZ)
     buf.writeln('^LH0,0');
     buf.writeln('^MTT');
 
-    void addLine(String text,
-        {bool bold = false, TextAlign align = TextAlign.left, int? yOverride}) {
+    void addLine(
+      String text, {
+      bool bold = false,
+      TextAlign align = TextAlign.left,
+      int? yOverride,
+    }) {
       final yCurrent = yOverride ?? y;
       final fontName = bold ? 'B' : 'A';
       final x = switch (align) {
@@ -45,7 +49,9 @@ class ZplReceiptService implements ReceiptPrinterService {
         TextAlign.right => widthDots - text.length * fontWidth - 10,
         _ => 10,
       };
-      buf.writeln('^FO${x.clamp(0, widthDots)},$yCurrent^A${fontName}N,${bold ? 30 : 24},${bold ? 16 : 13}^FD$text^FS');
+      buf.writeln(
+        '^FO${x.clamp(0, widthDots)},$yCurrent^A${fontName}N,${bold ? 30 : 24},${bold ? 16 : 13}^FD$text^FS',
+      );
       y = yCurrent + lineHeight;
     }
 
@@ -57,8 +63,7 @@ class ZplReceiptService implements ReceiptPrinterService {
     for (final block in template.blocks.where((b) => b.visible)) {
       switch (block) {
         case HeaderBlock b:
-          final name =
-              b.storeName.isNotEmpty ? b.storeName : receipt.storeName;
+          final name = b.storeName.isNotEmpty ? b.storeName : receipt.storeName;
           addLine(name, bold: true, align: b.align);
           if (b.subtitle != null && b.subtitle!.isNotEmpty) {
             addLine(b.subtitle!, align: b.align);
@@ -79,21 +84,23 @@ class ZplReceiptService implements ReceiptPrinterService {
             addLine(line);
             if (b.showDiscount && item.hasDiscount) {
               addLine(
-                  '  \u0421\u043a\u0438\u0434\u043a\u0430 ${item.discountPct!.toStringAsFixed(0)}%: -${_fmtMoney(item.lineDiscount)}\u20bd');
+                '  \u0421\u043a\u0438\u0434\u043a\u0430 ${item.discountPct!.toStringAsFixed(0)}%: -${_fmtMoney(item.lineDiscount)}\u20bd',
+              );
             }
           }
 
         case TotalsBlock b:
           if (b.showSubtotal && receipt.hasDiscount) {
             addLine(
-                '\u0418\u0442\u043e\u0433\u043e \u0431\u0435\u0437 \u0441\u043a\u0438\u0434\u043a\u0438: ${_fmtMoney(receipt.subtotal)}\u20bd');
+              '\u0418\u0442\u043e\u0433\u043e \u0431\u0435\u0437 \u0441\u043a\u0438\u0434\u043a\u0438: ${_fmtMoney(receipt.subtotal)}\u20bd',
+            );
           }
           if (b.showDiscountLine && receipt.hasDiscount) {
             addLine(
-                '\u0421\u043a\u0438\u0434\u043a\u0430: -${_fmtMoney(receipt.totalDiscount)}\u20bd');
+              '\u0421\u043a\u0438\u0434\u043a\u0430: -${_fmtMoney(receipt.totalDiscount)}\u20bd',
+            );
           }
-          addLine('\u0418\u0422\u041e\u0413\u041e: ${_fmtMoney(receipt.total)}\u20bd',
-              bold: true);
+          addLine('\u0418\u0422\u041e\u0413\u041e: ${_fmtMoney(receipt.total)}\u20bd', bold: true);
 
         case FooterBlock b:
           addLine(b.text, align: b.align);
@@ -109,8 +116,7 @@ class ZplReceiptService implements ReceiptPrinterService {
   }
 
   String _fmtMoney(double v) => v.toStringAsFixed(2);
-  String _fmtNum(double v) =>
-      v == v.truncateToDouble() ? v.toInt().toString() : v.toString();
+  String _fmtNum(double v) => v == v.truncateToDouble() ? v.toInt().toString() : v.toString();
 
   String _formatDate(DateTime dt, String fmt) => fmt
       .replaceAll('dd', dt.day.toString().padLeft(2, '0'))

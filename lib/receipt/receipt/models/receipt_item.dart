@@ -5,11 +5,7 @@ class ReceiptItem {
   final double qty;
   final double? discountPct; // null = no discount
 
-  const ReceiptItem({
-    required this.product,
-    required this.qty,
-    this.discountPct,
-  });
+  const ReceiptItem({required this.product, required this.qty, this.discountPct});
 
   double get lineSubtotal => product.price * qty;
   double get lineDiscount => discountPct != null ? lineSubtotal * discountPct! / 100 : 0;

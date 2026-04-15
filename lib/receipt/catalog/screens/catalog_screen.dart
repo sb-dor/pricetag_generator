@@ -18,8 +18,10 @@ class CatalogScreen extends StatelessWidget {
           final products = notifier.products;
           if (products.isEmpty) {
             return const Center(
-              child: Text('Нет товаров. Нажмите + чтобы добавить.',
-                  style: TextStyle(color: Colors.grey)),
+              child: Text(
+                'Нет товаров. Нажмите + чтобы добавить.',
+                style: TextStyle(color: Colors.grey),
+              ),
             );
           }
           return ListView.separated(
@@ -35,8 +37,7 @@ class CatalogScreen extends StatelessWidget {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.edit_outlined),
-                      onPressed: () =>
-                          _showProductDialog(context, notifier, product: p),
+                      onPressed: () => _showProductDialog(context, notifier, product: p),
                     ),
                     IconButton(
                       icon: const Icon(Icons.delete_outline, color: Colors.red),
@@ -56,12 +57,10 @@ class CatalogScreen extends StatelessWidget {
     );
   }
 
-  void _showProductDialog(BuildContext context, CatalogNotifier notifier,
-      {Product? product}) {
+  void _showProductDialog(BuildContext context, CatalogNotifier notifier, {Product? product}) {
     final isEdit = product != null;
     final nameCtrl = TextEditingController(text: product?.name ?? '');
-    final priceCtrl =
-        TextEditingController(text: product?.price.toStringAsFixed(2) ?? '');
+    final priceCtrl = TextEditingController(text: product?.price.toStringAsFixed(2) ?? '');
     String unit = product?.unit ?? 'шт';
 
     showDialog(
@@ -76,50 +75,52 @@ class CatalogScreen extends StatelessWidget {
                 controller: nameCtrl,
                 autofocus: true,
                 decoration: const InputDecoration(
-                    labelText: 'Название', border: OutlineInputBorder()),
+                  labelText: 'Название',
+                  border: OutlineInputBorder(),
+                ),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: priceCtrl,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 decoration: const InputDecoration(
-                    labelText: 'Цена (₽)', border: OutlineInputBorder()),
+                  labelText: 'Цена (₽)',
+                  border: OutlineInputBorder(),
+                ),
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 initialValue: unit,
                 decoration: const InputDecoration(
-                    labelText: 'Единица', border: OutlineInputBorder()),
+                  labelText: 'Единица',
+                  border: OutlineInputBorder(),
+                ),
                 items: Product.units
-                    .map((u) =>
-                        DropdownMenuItem(value: u, child: Text(u)))
+                    .map((u) => DropdownMenuItem(value: u, child: Text(u)))
                     .toList(),
                 onChanged: (v) => setS(() => unit = v ?? 'шт'),
               ),
             ],
           ),
           actions: [
-            TextButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: const Text('Отмена')),
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Отмена')),
             FilledButton(
               onPressed: () {
                 final name = nameCtrl.text.trim();
-                final price = double.tryParse(
-                    priceCtrl.text.replaceAll(',', '.'));
+                final price = double.tryParse(priceCtrl.text.replaceAll(',', '.'));
                 if (name.isEmpty || price == null || price < 0) return;
 
                 if (isEdit) {
-                  notifier.update(product.copyWith(
-                      name: name, price: price, unit: unit));
+                  notifier.update(product.copyWith(name: name, price: price, unit: unit));
                 } else {
-                  notifier.add(Product(
-                    id: DateTime.now().microsecondsSinceEpoch.toString(),
-                    name: name,
-                    price: price,
-                    unit: unit,
-                  ));
+                  notifier.add(
+                    Product(
+                      id: DateTime.now().microsecondsSinceEpoch.toString(),
+                      name: name,
+                      price: price,
+                      unit: unit,
+                    ),
+                  );
                 }
                 Navigator.pop(ctx);
               },
@@ -131,17 +132,14 @@ class CatalogScreen extends StatelessWidget {
     );
   }
 
-  void _confirmDelete(
-      BuildContext context, CatalogNotifier notifier, Product product) {
+  void _confirmDelete(BuildContext context, CatalogNotifier notifier, Product product) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Удалить товар?'),
         content: Text('«${product.name}» будет удалён из каталога.'),
         actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('Отмена')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Отмена')),
           FilledButton(
             onPressed: () {
               notifier.remove(product.id);
