@@ -10,7 +10,7 @@ class TemplateStorage {
     final raw = prefs.getString(_key);
     if (raw == null) return [];
     final list = jsonDecode(raw) as List;
-    return list.map((e) => ReceiptTemplate.fromJson(e as Map<String, dynamic>)).toList();
+    return list.map((e) => ReceiptTemplate.fromJson(e as Map<String, Object?>)).toList();
   }
 
   Future<void> saveAll(List<ReceiptTemplate> templates) async {

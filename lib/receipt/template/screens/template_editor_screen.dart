@@ -1,4 +1,6 @@
+import 'package:canvas_barcode_generator/receipt/core/di/receipt_settings.dart';
 import 'package:flutter/material.dart';
+
 import '../../core/di/receipt_scope.dart';
 import '../models/receipt_block.dart';
 import '../models/receipt_template.dart';
@@ -22,6 +24,7 @@ class _TemplateEditorScreenState extends State<TemplateEditorScreen> {
   @override
   Widget build(BuildContext context) {
     final notifier = ReceiptScope.of(context).templateNotifier;
+    final settings = ReceiptScope.of(context).settings;
 
     return Scaffold(
       appBar: AppBar(
@@ -30,7 +33,7 @@ class _TemplateEditorScreenState extends State<TemplateEditorScreen> {
           IconButton(
             icon: const Icon(Icons.preview_outlined),
             tooltip: 'Предпросмотр',
-            onPressed: () => _showPreview(context, notifier),
+            onPressed: () => _showPreview(context, notifier, settings),
           ),
           IconButton(
             icon: const Icon(Icons.save_outlined),
@@ -55,11 +58,15 @@ class _TemplateEditorScreenState extends State<TemplateEditorScreen> {
                   children: [
                     const Text('Ширина бумаги:', style: TextStyle(fontWeight: FontWeight.w500)),
                     const SizedBox(width: 12),
-                    SegmentedButton<int>(
-                      segments: const [
-                        ButtonSegment(value: 58, label: Text('58 мм')),
-                        ButtonSegment(value: 80, label: Text('80 мм')),
-                      ],
+                    SegmentedButton<PaperWidthMM>(
+                      segments: PaperWidthMM.values
+                          .map(
+                            (el) => ButtonSegment<PaperWidthMM>(
+                              value: el,
+                              label: Text('${el.value} мм'),
+                            ),
+                          )
+                          .toList(),
                       selected: {tmpl.paperWidthMm},
                       onSelectionChanged: (s) => notifier.setEditingPaperWidth(s.first),
                     ),
@@ -128,7 +135,11 @@ class _TemplateEditorScreenState extends State<TemplateEditorScreen> {
     );
   }
 
-  void _showPreview(BuildContext context, TemplateNotifier notifier) {
+  void _showPreview(
+    BuildContext context,
+    final TemplateNotifier notifier,
+    final ReceiptSettings receiptSettings,
+  ) {
     final tmpl = notifier.editing;
     final cols = tmpl.cols;
     final lines = <String>[];
@@ -136,7 +147,7 @@ class _TemplateEditorScreenState extends State<TemplateEditorScreen> {
     for (final block in tmpl.blocks.where((b) => b.visible)) {
       switch (block) {
         case HeaderBlock b:
-          lines.add(_center(b.storeName, cols));
+          lines.add(_center(b.storeName ?? receiptSettings.storeName, cols));
           if (b.subtitle != null) lines.add(_center(b.subtitle!, cols));
         case DateTimeBlock _:
           lines.add('01.01.2025  14:30');
@@ -338,7 +349,7 @@ class _BlockConfigPanelState extends State<_BlockConfigPanel> {
     };
   }
 
-  Widget _textField(String label, String value, ValueChanged<String> onChanged) {
+  Widget _textField(String label, String? value, ValueChanged<String> onChanged) {
     return TextFormField(
       initialValue: value,
       decoration: InputDecoration(labelText: label, border: const OutlineInputBorder()),

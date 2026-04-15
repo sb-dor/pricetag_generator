@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+
 import '../../catalog/models/product.dart';
 import '../../template/models/receipt_template.dart';
 import '../models/receipt.dart';
@@ -25,11 +26,19 @@ class ReceiptNotifier extends ChangeNotifier {
 
   void addProduct(Product product) {
     // If product already exists, increment qty
-    final i = _items.indexWhere((item) => item.product.id == product.id);
+    final i = _items.indexWhere((item) => item.id == product.id);
     if (i != -1) {
       _items[i] = _items[i].copyWith(qty: _items[i].qty + 1);
     } else {
-      _items.add(ReceiptItem(product: product, qty: 1));
+      _items.add(
+        ReceiptItem(
+          id: product.id,
+          label: product.name,
+          unit: product.unit,
+          price: product.price,
+          qty: 1,
+        ),
+      );
     }
     notifyListeners();
   }
@@ -51,6 +60,12 @@ class ReceiptNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  Receipt buildReceipt(String storeName) =>
-      Receipt(storeName: storeName, items: List.of(_items), printedAt: DateTime.now());
+  Receipt buildReceipt(String storeName) => Receipt(
+    storeName: storeName,
+    items: List.of(_items),
+    printedAt: DateTime.now(),
+    customerCode: '777888999',
+    customerName: 'Nuqr',
+    previousDebt: 90,
+  );
 }

@@ -26,16 +26,11 @@ sealed class ReceiptBlock {
 // ── Header ────────────────────────────────────────────────────────────────────
 
 class HeaderBlock extends ReceiptBlock {
-  String storeName;
+  String? storeName;
   String? subtitle;
   TextAlign align;
 
-  HeaderBlock({
-    super.visible,
-    this.storeName = 'Название магазина',
-    this.subtitle,
-    this.align = TextAlign.center,
-  });
+  HeaderBlock({super.visible, this.storeName, this.subtitle, this.align = TextAlign.center});
 
   @override
   String get displayName => 'Шапка (название магазина)';
@@ -51,7 +46,7 @@ class HeaderBlock extends ReceiptBlock {
 
   factory HeaderBlock.fromJson(Map<String, dynamic> j) => HeaderBlock(
     visible: j['visible'] as bool? ?? true,
-    storeName: j['storeName'] as String? ?? 'Название магазина',
+    storeName: j['storeName'] as String?,
     subtitle: j['subtitle'] as String?,
     align: TextAlign.values[j['align'] as int? ?? TextAlign.center.index],
   );

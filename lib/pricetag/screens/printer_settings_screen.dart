@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import '../core/di/app_scope.dart';
 import '../core/di/printer_settings.dart';
 import '../designer/models/label_size.dart';

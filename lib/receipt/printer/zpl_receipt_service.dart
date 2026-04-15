@@ -1,13 +1,15 @@
 import 'dart:convert';
 import 'dart:typed_data';
+
 import 'package:flutter/material.dart' show TextAlign;
+
 import '../../pricetag/transport/printer_transport.dart';
 import '../receipt/models/receipt.dart';
 import '../template/models/receipt_block.dart';
 import '../template/models/receipt_template.dart';
-import 'receipt_printer_service.dart';
+import 'i_receipt_printer_service.dart';
 
-class ZplReceiptService implements ReceiptPrinterService {
+class ZplReceiptService implements IReceiptPrinterService {
   @override
   Future<void> printReceipt({
     required Receipt receipt,
@@ -24,7 +26,7 @@ class ZplReceiptService implements ReceiptPrinterService {
   String _buildZpl(Receipt receipt, ReceiptTemplate template) {
     final buf = StringBuffer();
     final dotsPerMm = 8; // 203 dpi ≈ 8 dots/mm
-    final widthDots = template.paperWidthMm * dotsPerMm;
+    final widthDots = template.paperWidthMm.value * dotsPerMm;
     final fontWidth = 18;
     final lineHeight = 28;
     int y = 30;
@@ -63,7 +65,7 @@ class ZplReceiptService implements ReceiptPrinterService {
     for (final block in template.blocks.where((b) => b.visible)) {
       switch (block) {
         case HeaderBlock b:
-          final name = b.storeName.isNotEmpty ? b.storeName : receipt.storeName;
+          final name = b.storeName ?? receipt.storeName;
           addLine(name, bold: true, align: b.align);
           if (b.subtitle != null && b.subtitle!.isNotEmpty) {
             addLine(b.subtitle!, align: b.align);
@@ -78,9 +80,9 @@ class ZplReceiptService implements ReceiptPrinterService {
 
         case ItemsTableBlock b:
           for (final item in receipt.items) {
-            final unit = b.showUnit ? ' ${item.product.unit}' : '';
+            final unit = b.showUnit ? ' ${item.unit}' : '';
             final line =
-                '${item.product.name}  ${_fmtNum(item.qty)}$unit x ${_fmtMoney(item.product.price)}\u20bd';
+                '${item.label}  ${_fmtNum(item.qty)}$unit x ${_fmtMoney(item.price)}\u20bd';
             addLine(line);
             if (b.showDiscount && item.hasDiscount) {
               addLine(

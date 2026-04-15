@@ -1,3 +1,5 @@
+import 'package:canvas_barcode_generator/receipt/printer/i_receipt_printer_service.dart';
+import 'package:canvas_barcode_generator/receipt/printer/layouts/tabulated_esc_layout_b.dart';
 import 'package:flutter/material.dart';
 
 import '../../pricetag/transport/tcp_transport.dart';
@@ -126,7 +128,13 @@ class _ReceiptMainScreenState extends State<ReceiptMainScreen> {
             isBusy: _isBusy,
             onAddItem: () => _showProductPicker(context),
             onClear: () => _confirmClear(context),
-            onPrint: () => _print(context),
+            onPrint: () async {
+              if (scope.settings.printerType == ReceiptPrinterType.xprinter) {
+                _print(context, printer: EscPosReceiptService(layout: TabulatedEscLayoutB()));
+              } else {
+                _print(context, printer: ZplReceiptService());
+              }
+            },
           ),
         ],
       ),
@@ -287,7 +295,7 @@ class _ReceiptMainScreenState extends State<ReceiptMainScreen> {
 
   // ── Print ─────────────────────────────────────────────────────────────────
 
-  Future<void> _print(BuildContext context) async {
+  Future<void> _print(BuildContext context, {required final IReceiptPrinterService printer}) async {
     final scope = ReceiptScope.read(context);
     final settings = scope.settings;
     final receipt = scope.receiptNotifier.buildReceipt(settings.storeName);
@@ -297,19 +305,7 @@ class _ReceiptMainScreenState extends State<ReceiptMainScreen> {
 
     setState(() => _isBusy = true);
     try {
-      if (settings.printerType == ReceiptPrinterType.xprinter) {
-        await EscPosReceiptService().printReceipt(
-          receipt: receipt,
-          template: template,
-          transport: transport,
-        );
-      } else {
-        await ZplReceiptService().printReceipt(
-          receipt: receipt,
-          template: template,
-          transport: transport,
-        );
-      }
+      await printer.printReceipt(receipt: receipt, template: template, transport: transport);
       messenger.showSnackBar(const SnackBar(content: Text('Чек отправлен на принтер')));
     } catch (e) {
       messenger.showSnackBar(SnackBar(content: Text('Ошибка: $e'), backgroundColor: Colors.red));
@@ -358,7 +354,7 @@ class _ReceiptItemTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(item.product.name, style: const TextStyle(fontWeight: FontWeight.w500)),
+                Text(item.label, style: const TextStyle(fontWeight: FontWeight.w500)),
                 if (item.hasDiscount)
                   Text(
                     'Скидка ${item.discountPct!.toStringAsFixed(0)}%',
@@ -371,7 +367,7 @@ class _ReceiptItemTile extends StatelessWidget {
           // Qty controls
           _QtyControl(
             qty: item.qty,
-            unit: item.product.unit,
+            unit: item.unit,
             onChanged: (q) => notifier.updateItem(index, item.copyWith(qty: q)),
           ),
 
@@ -416,7 +412,7 @@ class _ReceiptItemTile extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Скидка на «${item.product.name}»'),
+        title: Text('Скидка на «${item.label}»'),
         content: TextField(
           controller: ctrl,
           autofocus: true,

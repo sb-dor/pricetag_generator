@@ -32,7 +32,7 @@ class TemplateNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setEditingPaperWidth(int mm) {
+  void setEditingPaperWidth(PaperWidthMM mm) {
     _editing = _editing.copyWith(paperWidthMm: mm);
     notifyListeners();
   }
