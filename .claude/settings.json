@@ -9,7 +9,15 @@
       "Bash(mv /Users/avaz/StudioProjects/canvas_barcode_generator/lib/printer /Users/avaz/StudioProjects/canvas_barcode_generator/lib/pricetag/)",
       "Bash(mv /Users/avaz/StudioProjects/canvas_barcode_generator/lib/screens /Users/avaz/StudioProjects/canvas_barcode_generator/lib/pricetag/)",
       "Bash(git add:*)",
-      "Bash(git commit -m ':*)"
+      "Bash(git commit -m ':*)",
+      "WebSearch",
+      "WebFetch(domain:pub.dev)",
+      "WebFetch(domain:github.com)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
+    ],
+    "additionalDirectories": [
+      "/Users/avaz/StudioProjects/canvas_barcode_generator/lib/pricetag/transport"
     ]
   }
 }
