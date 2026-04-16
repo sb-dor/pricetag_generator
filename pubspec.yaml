@@ -34,15 +34,17 @@ dependencies:
   cupertino_icons: ^1.0.8
 
   # Barcode rendering — supports EAN-13, QR, Code128, UPC, DataMatrix, etc.
+  # only for pricetag folder 
   barcode_widget: ^2.0.3
 
-  # ESC/POS command builder + raster image printing for Xprinter
+  # only for pricetag folder
   esc_pos_utils_updated: ^1.1.0
 
   # Image manipulation — PNG → monochrome bitmap for ZPL / ESC/POS
   image: ^4.1.7
 
   # PDF generation + system print dialog (regular printers)
+  # only for pricetag folder
   pdf: ^3.10.8
   printing: ^5.12.0
 
@@ -50,9 +52,11 @@ dependencies:
   shared_preferences: ^2.3.3
 
   # File path resolution for export
+  # only for pricetag folder
   path_provider: ^2.1.4
 
   # Share / save files (PDF, PNG) across all platforms
+  # only for pricetag folder
   share_plus: ^10.1.2
 
 dev_dependencies:

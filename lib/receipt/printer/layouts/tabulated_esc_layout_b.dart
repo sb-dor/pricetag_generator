@@ -47,13 +47,14 @@ class TabulatedEscLayoutB implements IEscPosReceiptLayout {
   static const _halfLf = [0x1B, 0x4A, 0x10];
 
   // GS ! n — character size: upper nibble = width multiplier−1, lower = height multiplier−1
-  // 0x11 → 2× width + 2× height  |  0x00 → normal
-  static const _size2x = [0x1D, 0x21, 0x11];
+  // 0x11 → 2× width + 2× height (80mm)
+  // 0x01 → 1× width + 2× height (58mm — normal width keeps ESC a centering accurate)
+  // 0x00 → normal
+  static const _size2xWide = [0x1D, 0x21, 0x11]; // 80mm
+  static const _size2xTall = [0x1D, 0x21, 0x01]; // 58mm
   static const _sizeNormal = [0x1D, 0x21, 0x00];
 
   static const _cut = [0x1D, 0x56, 0x42, 0x00];
-
-  static List<int> _feedLines(int n) => [0x1B, 0x64, n];
 
   // ── Column geometry ────────────────────────────────────────────────────────
 
@@ -72,16 +73,33 @@ class TabulatedEscLayoutB implements IEscPosReceiptLayout {
 
     buf
       ..addAll(_reset)
-      ..addAll(_cp866);
+      ..addAll(_cp866)
+      ..addAll(_halfLf); // tiny top margin
 
-    // Store name — centered, bold, 2× size (GS ! keeps CP866 encoding intact)
+    // Store name — bold, sized.
+    // 80mm: printer center alignment + 2×2 size works correctly.
+    // 58mm: ESC a center is unreliable with GS! on narrow paper, so use left
+    //       alignment and prepend spaces manually.
+    final storeName = receipt.storeName;
+    if (cols >= 40) {
+      buf
+        ..addAll(_center)
+        ..addAll(_size2xWide)
+        ..addAll(_boldOn)
+        ..addAll(_encode(storeName))
+        ..addAll(_boldOff)
+        ..addAll(_sizeNormal);
+    } else {
+      final pad = ((cols - storeName.length) / 2).floor().clamp(0, cols);
+      buf
+        ..addAll(_left)
+        ..addAll(_size2xTall)
+        ..addAll(_boldOn)
+        ..addAll(_encode(' ' * pad + storeName))
+        ..addAll(_boldOff)
+        ..addAll(_sizeNormal);
+    }
     buf
-      ..addAll(_center)
-      ..addAll(_size2x)
-      ..addAll(_boldOn)
-      ..addAll(_encode(receipt.storeName))
-      ..addAll(_boldOff)
-      ..addAll(_sizeNormal)
       ..addAll(_lf)
       ..addAll(_halfLf); // half-height gap between store name and date
 
@@ -117,7 +135,7 @@ class TabulatedEscLayoutB implements IEscPosReceiptLayout {
     }
 
     buf
-      ..addAll(_feedLines(4))
+      ..addAll(_halfLf) // tiny bottom margin before cut
       ..addAll(_cut);
 
     return buf;
@@ -126,10 +144,12 @@ class TabulatedEscLayoutB implements IEscPosReceiptLayout {
   // ── Item renderer ──────────────────────────────────────────────────────────
 
   void _writeItem(List<int> buf, int idx, ReceiptItem item, int cols, String dashes) {
-    // Row 1: index + name
+    // Row 1: index + name (bold)
     buf
       ..addAll(_left)
+      ..addAll(_boldOn)
       ..addAll(_encode('$idx  ${item.label}'))
+      ..addAll(_boldOff)
       ..addAll(_lf);
 
     // Row 2: qty x | price = | lineSubtotal  (column-aligned, no unit / сум.)
@@ -163,16 +183,15 @@ class TabulatedEscLayoutB implements IEscPosReceiptLayout {
   // ── Totals renderer ────────────────────────────────────────────────────────
 
   void _writeTotals(List<int> buf, Receipt receipt, int cols, String dashes) {
-    // ВСЕГО (bold) — indented to qty column
-    buf
-      ..addAll(_left)
-      ..addAll(_boldOn)
-      ..addAll(_encode(_qtyRow('ВСЕГО:', _fmtAmt(receipt.subtotal), cols)))
-      ..addAll(_boldOff)
-      ..addAll(_lf);
-
-    // Сумма скидки -X% (only when there is a discount) — indented to qty column
+    // ВСЕГО + Сумма скидки — only shown when there is a discount
     if (receipt.hasDiscount) {
+      buf
+        ..addAll(_left)
+        ..addAll(_boldOn)
+        ..addAll(_encode(_qtyRow('ВСЕГО:', _fmtAmt(receipt.subtotal), cols)))
+        ..addAll(_boldOff)
+        ..addAll(_lf);
+
       final pct = _fmtAmt(
         receipt.subtotal > 0 ? receipt.totalDiscount / receipt.subtotal * 100 : 0,
       );
@@ -182,11 +201,14 @@ class TabulatedEscLayoutB implements IEscPosReceiptLayout {
         ..addAll(_lf);
     }
 
-    // Dash separator
-    buf
-      ..addAll(_left)
-      ..addAll(_encode(dashes))
-      ..addAll(_lf);
+    // Dash separator — only needed when the discount block above was printed;
+    // without discount the last item already ends with its own dash line.
+    if (receipt.hasDiscount) {
+      buf
+        ..addAll(_left)
+        ..addAll(_encode(dashes))
+        ..addAll(_lf);
+    }
 
     // ИТОГО К ОПЛАТЕ (bold) — indented to qty column
     buf
@@ -254,7 +276,8 @@ class TabulatedEscLayoutB implements IEscPosReceiptLayout {
     final qw = _qtyW(cols);
     final pw = _priceW(cols);
     final tw = _totalW(cols);
-    return _padEnd('№  Наименование', nw) +
+    final nameLabel = cols >= 40 ? 'Наименование' : 'Наим';
+    return _padEnd('№  $nameLabel', nw) +
         _padLeft('Кол-во', qw) +
         _padLeft('Цена', pw) +
         _padLeft(totalLabel, tw);
