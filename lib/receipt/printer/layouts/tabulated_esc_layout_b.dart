@@ -129,8 +129,8 @@ class TabulatedEscLayoutB implements IEscPosReceiptLayout {
     // Totals
     _writeTotals(buf, receipt, cols, dashes);
 
-    // Customer debt section (optional)
-    if (receipt.customerCode != null || receipt.customerName != null) {
+    // Customer section — only printed when customerName is provided
+    if (receipt.customerName != null) {
       _writeCustomer(buf, receipt, cols, dashes);
     }
 
@@ -234,38 +234,35 @@ class TabulatedEscLayoutB implements IEscPosReceiptLayout {
   // ── Customer section ──────────────────────────────────────────────────────
 
   void _writeCustomer(List<int> buf, Receipt receipt, int cols, String dashes) {
-    final prevDebt = receipt.previousDebt ?? 0;
-    final currentDebt = prevDebt + receipt.total;
-
     // Separator before customer block
     buf
       ..addAll(_left)
       ..addAll(_encode(dashes))
       ..addAll(_lf);
 
-    // "code | - name"  (bold)
-    final header = [
-      receipt.customerCode,
-      receipt.customerName != null ? '- ${receipt.customerName}' : null,
-    ].whereType<String>().join(' | ');
+    // Phone | - Name  (customerCode shown only when provided)
+    final nameLine = receipt.customerCode != null
+        ? '${receipt.customerCode} | - ${receipt.customerName}'
+        : receipt.customerName!;
     buf
       ..addAll(_left)
       ..addAll(_boldOn)
-      ..addAll(_encode(header))
+      ..addAll(_encode(nameLine))
       ..addAll(_boldOff)
       ..addAll(_lf);
 
-    // Предыдущий долг (indented to qty column)
-    buf
-      ..addAll(_left)
-      ..addAll(_encode(_qtyRow('Предыдущий долг:', _fmtAmt(prevDebt), cols)))
-      ..addAll(_lf);
-
-    // Текущий долг (indented to qty column)
-    buf
-      ..addAll(_left)
-      ..addAll(_encode(_qtyRow('Текущий долг:', _fmtAmt(currentDebt), cols)))
-      ..addAll(_lf);
+    // Debt lines — only when previousDebt was supplied
+    if (receipt.previousDebt != null) {
+      final prevDebt = receipt.previousDebt!;
+      final currentDebt = prevDebt + receipt.total;
+      buf
+        ..addAll(_left)
+        ..addAll(_encode(_qtyRow('Предыдущий долг:', _fmtAmt(prevDebt), cols)))
+        ..addAll(_lf)
+        ..addAll(_left)
+        ..addAll(_encode(_qtyRow('Текущий долг:', _fmtAmt(currentDebt), cols)))
+        ..addAll(_lf);
+    }
   }
 
   // ── Layout helpers ─────────────────────────────────────────────────────────
